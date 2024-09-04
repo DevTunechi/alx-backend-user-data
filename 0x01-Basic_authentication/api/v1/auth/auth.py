@@ -2,6 +2,7 @@
 """ Authentication module """
 from flask import request
 from typing import List, TypeVar
+import fnmatch
 
 
 class Auth:
@@ -39,3 +40,24 @@ class Auth:
         Returns None
         """
         return None
+
+
+def require_auth(self, path: str, excluded_paths: list) -> bool:
+    """
+    Checks if a path requires authentication based on excluded paths.
+
+    Args:
+        path (str): The path to check.
+        excluded_paths (list): A list of patterns that don't require auth
+
+    Returns:
+        bool: True if authentication is required, False otherwise.
+    """
+    if not path or not excluded_paths:
+        return True
+
+    for pattern in excluded_paths:
+        if fnmatch.fnmatch(path, pattern):
+            return False
+
+    return True
